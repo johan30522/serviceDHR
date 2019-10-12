@@ -1,0 +1,14 @@
+{
+    "development": {
+        "config_id": "development",
+        "endPointEvidences": "https://app.ecertia.com/api/EviMail/Query",
+        "user_EndpointEvidences": "gmora@dhr.go.cr",
+        "passwd_EndpointEvidences": "CRdefensoria19"
+    },
+    "production": {
+        "config_id": "production",
+        "endPointEvidences": "https://app.ecertia.com/api/EviMail/Query",
+        "user_EndpointEvidences": "gmora@dhr.go.cr",
+        "passwd_EndpointEvidences": "CRdefensoria19"
+    }
+}
