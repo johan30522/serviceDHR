@@ -3,12 +3,14 @@
         "config_id": "development",
         "endPointEvidences": "https://app.ecertia.com/api/EviMail/Query",
         "user_EndpointEvidences": "gmora@dhr.go.cr",
-        "passwd_EndpointEvidences": "CRdefensoria19"
+        "passwd_EndpointEvidences": "CRdefensoria19",
+        "endPointDomino": "http://127.0.0.1/DHR/ExpedienteDHR.nsf/ExpedientesEvidencias.xsp"
     },
     "production": {
         "config_id": "production",
         "endPointEvidences": "https://app.ecertia.com/api/EviMail/Query",
         "user_EndpointEvidences": "gmora@dhr.go.cr",
-        "passwd_EndpointEvidences": "CRdefensoria19"
+        "passwd_EndpointEvidences": "CRdefensoria19",
+        "endPointDomino": "http://127.0.0.1/DHR/ExpedienteDHR.nsf/ExpedientesEvidencias.xsp"
     }
 }
