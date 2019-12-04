@@ -15,14 +15,16 @@ const getEvidence = async() => {
         //console.log(evidencias);
         console.log(evidencias);
         saveAttachmentsEvidence(evidencias, expe.numExpediente) //Procesa y salva los anexos de evidencias 
-            .then(result => {
+            .then(async result => {
                 console.log('@@@@@@@@@@@@@@@@@@@@@@@@@ Archivos Guardados @@@@@@@@@@@@@@@@@@@@@@@@');
                 //Actualiza estado en Domino por medio del API
-                let expedienteRefresh = {
+                let expedienteMod = {
                     "numExpediente": expe.numExpediente,
                     "evidencesNames": result
                 };
                 //Actualiza en Domino
+                let msgExpediente = await domino.postExpedientDomino(expedienteMod);
+                console.log(msgExpediente);
                 console.log(expedienteRefresh);
             })
             .catch(error => config.log.warn(error))
@@ -43,7 +45,7 @@ const saveAttachmentsEvidence = async(body, numExpediente) => {
                 let filename = evidenceDescription + '_' + date + '.pdf';
                 let file = '/files/' + numExpediente + "/" + filename;
                 Promise.resolve()
-                    .then(function() { ensureDir('/files/' + numExpediente) }) //crea el directorio on el numero de expediente
+                    .then(function() { config.ensureDir('/files/' + numExpediente) }) //crea el directorio on el numero de expediente
                     .then(() => { //crea los archivos de evidencias
                         config.log.info(`>>Crea el archivo : ${file}`);
                         console.log("Guarda el archivo");
@@ -59,15 +61,6 @@ const saveAttachmentsEvidence = async(body, numExpediente) => {
         resolve(arrayFilesNames);
     })
     return promise;
-}
-const ensureDir = (dirpath) => {
-    return fs.mkdir(dirpath, { recursive: true }, function(err) {
-        if (err.code === 'EEXIST') {
-            return Promise.resolve()
-        } else {
-            return Promise.reject(err)
-        }
-    })
 }
 module.exports = {
     getEvidence
