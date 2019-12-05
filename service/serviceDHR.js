@@ -35,13 +35,11 @@ const saveAttachmentsEvidence = async(body, numExpediente) => {
     let date = new Date().getTime();
     let arrayFilesNames = [];
     let promise = await new Promise((resolve, reject) => {
-        for (var i = 0; i < results.length; i++) {
-            let iterID = results[i].uniqueId;
-            let iterName = results[i].subject;
-            let evidences = results[i].affidavits;
-            for (var j = 0; j < evidences.length; j++) {
-                let evidenceDescription = evidences[j].description
-                let evidenceBody = evidences[j].bytes;
+        for (let result of results) {
+            let evidences = result.affidavits;
+            for (let evidence of evidences) {
+                let evidenceDescription = evidence.description
+                let evidenceBody = evidence.bytes;
                 let filename = evidenceDescription + '_' + date + '.pdf';
                 let file = '/files/' + numExpediente + "/" + filename;
                 Promise.resolve()
