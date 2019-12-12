@@ -1,10 +1,14 @@
 {
     "development": {
         "config_id": "development",
-        "endPointDomino": "http://127.0.0.1/DHR/ExpedienteDHR.nsf/ExpedientesEvidencias.xsp"
+        "endPointDomino": "http://127.0.0.1/DHR/ExpedienteDHR.nsf/ExpedientesEvidencias.xsp",
+        "userDomino": "aadmin@gbm.net",
+        "pwdDomino": "12345678"
     },
     "production": {
         "config_id": "production",
-        "endPointDomino": "http://127.0.0.1/DHR/ExpedienteDHR.nsf/ExpedientesEvidencias.xsp"
+        "endPointDomino": "http://127.0.0.1/DHR/ExpedienteDHR.nsf/ExpedientesEvidencias.xsp",
+        "userDomino": "aadmin@gbm.net",
+        "pwdDomino": "12345678"
     }
 }

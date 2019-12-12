@@ -6,29 +6,42 @@ const ecertia = require('./ecertia/ecertia');
 
 //get the response from provider to get the attachments
 const getEvidence = async() => {
+    try {
 
-    let expedients = await domino.getExpedientsDomino();
-    let configEcertia = await domino.getConfigEcertia();
-    for (let expe of expedients) {
-        console.log(expe.idCorreo);
-        let evidencias = await ecertia.getEvidencias('2f5a3476-040c-4bc5-8365-aaa801784b02', configEcertia);
-        //console.log(evidencias);
-        console.log(evidencias);
-        saveAttachmentsEvidence(evidencias, expe.numExpediente) //Procesa y salva los anexos de evidencias 
-            .then(async result => {
-                console.log('@@@@@@@@@@@@@@@@@@@@@@@@@ Archivos Guardados @@@@@@@@@@@@@@@@@@@@@@@@');
-                //Actualiza estado en Domino por medio del API
-                let expedienteMod = {
-                    "numExpediente": expe.numExpediente,
-                    "evidencesNames": result
-                };
-                //Actualiza en Domino
-                let msgExpediente = await domino.postExpedientDomino(expedienteMod);
-                console.log(msgExpediente);
-                console.log(expedienteRefresh);
-            })
-            .catch(error => config.log.warn(error))
+        let expedients = await domino.getExpedientsDomino();
+        console.log(expedients);
+        if (!expedients.hasOwnProperty('error')) {
+            // console.log(expedients);
+
+            let configEcertia = await domino.getConfigEcertia();
+            for (let expe of expedients) {
+                console.log(expe.idCorreo);
+                let evidencias = await ecertia.getEvidencias(expe.idCorreo, configEcertia);
+                //console.log(evidencias);
+                //console.log(evidencias);
+                saveAttachmentsEvidence(evidencias, expe.numExpediente) //Procesa y salva los anexos de evidencias 
+                    .then(async result => {
+                        //Actualiza estado en Domino por medio del API
+                        let expedienteMod = {
+                            "numExpediente": expe.numExpediente,
+                            "evidencesNames": result
+                        };
+                        //Actualiza en Domino
+                        console.log('Archivos para domino:');
+                        console.log(expedienteMod);
+                        let msgExpediente = await domino.postExpedientDomino(expedienteMod);
+                        console.log(msgExpediente);
+                    })
+                    .catch(error => config.log.warn(error))
+            }
+        } else {
+            config.log.warn(expedients.error);
+        }
+    } catch (error) {
+        config.log.warn(error);
     }
+
+
 }
 const saveAttachmentsEvidence = async(body, numExpediente) => {
     let results = body.results;

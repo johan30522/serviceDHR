@@ -7,11 +7,12 @@ let cron = require('node-cron');
 process.env.NODE_ENV = 'development';
 const config = require('./config');
 app.use(logger('dev'));
-// cron.schedule('0 0 */3 * * *', function() {
+console.log("Aplicativo de la defensoria de los habitantes**");
+//cron.schedule('* * * * *', function() {
 console.log("running a job Consulta de Evidencias Externas**");
 config.log.info("***Inicia Consulta de Evidencias Externas***");
 evidenceService.getEvidence();
-// });
+//});
 
 
 module.exports = app;
