@@ -7,32 +7,39 @@ const ecertia = require('./ecertia/ecertia');
 //get the response from provider to get the attachments
 const getEvidence = async() => {
     try {
-
         let expedients = await domino.getExpedientsDomino();
-        console.log(expedients);
+        //console.log(expedients);
         if (!expedients.hasOwnProperty('error')) {
             // console.log(expedients);
-
             let configEcertia = await domino.getConfigEcertia();
             for (let expe of expedients) {
+                let arrayFilesNamesExpedient = [];
                 console.log(expe.idCorreo);
-                let evidencias = await ecertia.getEvidencias(expe.idCorreo, configEcertia);
-                //console.log(evidencias);
-                //console.log(evidencias);
-                saveAttachmentsEvidence(evidencias, expe.numExpediente) //Procesa y salva los anexos de evidencias 
-                    .then(async result => {
-                        //Actualiza estado en Domino por medio del API
-                        let expedienteMod = {
-                            "numExpediente": expe.numExpediente,
-                            "evidencesNames": result
-                        };
-                        //Actualiza en Domino
-                        console.log('Archivos para domino:');
-                        console.log(expedienteMod);
-                        let msgExpediente = await domino.postExpedientDomino(expedienteMod);
-                        console.log(msgExpediente);
-                    })
-                    .catch(error => config.log.warn(error))
+                for (let id of expe.idCorreo) {
+                    try {
+                        console.log(id);
+                        //obtiene las evidencias para cada id de correo
+                        let evidencias = await ecertia.getEvidencias(id, configEcertia);
+                        //Salva a disco las evidencias del id de correo
+                        let arrayNames = await saveAttachmentsEvidence(evidencias, expe.numExpediente);
+                        arrayFilesNamesExpedient = arrayFilesNamesExpedient.concat(arrayNames);
+                    } catch (error) {
+                        return `No se pudo obtener las evidencias para el oficio: ${expe.numExpediente} `
+                    }
+                }
+                try {
+                    let expedienteMod = {
+                        "numExpediente": expe.numExpediente,
+                        "evidencesNames": arrayFilesNamesExpedient
+                    };
+                    //Actualiza en Domino
+                    console.log('Archivos para domino:');
+                    console.log(expedienteMod);
+                    let msgExpediente = await domino.postExpedientDomino(expedienteMod);
+                    console.log(msgExpediente);
+                } catch (error) {
+                    return `No se pudo actualizar en domino las evidencias para el expediente: ${expe.numExpediente} `
+                }
             }
         } else {
             config.log.warn(expedients.error);
@@ -40,9 +47,8 @@ const getEvidence = async() => {
     } catch (error) {
         config.log.warn(error);
     }
-
-
 }
+
 const saveAttachmentsEvidence = async(body, numExpediente) => {
     let results = body.results;
     let date = new Date().getTime();
